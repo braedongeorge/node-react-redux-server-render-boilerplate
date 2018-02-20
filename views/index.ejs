@@ -1,0 +1,7 @@
+<%- include('header') -%>
+  <div id="root"><%- html -%></div>
+
+  <script type="text/javascript">
+    window.initialData = <%- JSON.stringify(data) -%>;
+  </script>
+<%- include('footer') -%>

@@ -1,0 +1,7 @@
+{
+	"server":
+	{
+		"input": "./lib/server.js",
+		"output": "./public/server.js"
+	}
+}
