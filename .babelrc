@@ -1,3 +1,16 @@
 {
-  "presets": ["react", "latest", "stage-2"]
+  "presets": ["react", "env"],
+  "env": {
+    "server": {
+      "plugins": [
+        [
+          "css-modules-transform", {
+            "preprocessCss": "./lib/sass-loader.js",
+            "generateScopedName": "[hash:8]",
+            "extensions": [".scss"]
+          }
+        ]
+      ]
+    }
+  }
 }

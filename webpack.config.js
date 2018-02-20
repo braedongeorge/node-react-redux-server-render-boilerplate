@@ -1,7 +1,9 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const nodeExternals = require('webpack-node-externals');
 
-module.exports = {
+const config = {
   context: path.resolve(__dirname),
   entry: [
     'react-hot-loader/patch',
@@ -21,26 +23,70 @@ module.exports = {
         loader: 'json-loader',
       },
       {
-        test: /\.jsx?$/, // Will use .js and .jsx files
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
       },
       {
         test: /\.scss$/,
-        exclude: /node_modules/,
-        use: [
-          { loader: 'style-loader' }, // creates style nodes from JS strings
-          { loader: 'css-loader', options: { sourceMap: true } }, // translates CSS into CommonJS
-          { loader: 'resolve-url-loader' }, // Resolve urls in CSS
-          { loader: 'sass-loader', options: { sourceMap: true } }, // compiles Sass to CSS
-        ],
+        loader: ExtractTextPlugin.extract({
+          use: [
+            {
+              loader: 'css-loader',
+              query: {
+                localIdentName: '[hash:8]',
+                modules: true,
+              },
+            }, {
+              loader: 'sass-loader',
+            },
+          ],
+        }),
       },
     ],
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
+    new ExtractTextPlugin('bundle.css'),
   ],
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
   },
 };
+
+const serverConfig = {
+  name: 'server',
+  target: 'node',
+  externals: [nodeExternals()],
+  entry: [
+    './serverEntry.js',
+  ],
+  output: {
+    path: path.join(__dirname, 'built/'),
+    filename: 'server.js',
+    publicPath: 'built/',
+    libraryTarget: 'commonjs2',
+  },
+  module: {
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+      },
+      {
+        test: /\.css$/,
+        loader: 'null',
+      },
+      {
+        test: /\.scss$/,
+        loader: 'css-loader/locals?modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]',
+      },
+    ],
+  },
+  resolve: {
+    root: __dirname,
+  },
+};
+
+module.exports = [config, serverConfig];
