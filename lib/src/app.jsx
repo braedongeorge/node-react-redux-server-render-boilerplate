@@ -18,7 +18,7 @@ export default() => (
     <main>
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route path="/Page1" component={Portfolio} />
+        <Route path="/Page1" component={Page1} />
         <Route component={NotFound} />
       </Switch>
     </main>
